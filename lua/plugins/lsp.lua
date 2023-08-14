@@ -22,11 +22,9 @@ return {
 			for k, settings in pairs(opts.servers) do
 				local setup = settings.setup or require("lspconfig")[k].setup
 				settings.setup = nil
-				setup {
-					on_attach = opts.on_attach,
-					capabilities = opts.capabilities,
-					settings = settings,
-				}
+				if not settings.on_attach then settings.on_attach = opts.on_attach end
+				if not settings.capabilities then settings.capabilities = opts.capabilities end
+				setup(settings)
 			end
 		end,
 	},
@@ -47,20 +45,22 @@ return {
 		{ "folke/neodev.nvim", optional = true },
 	} },
 
-	util.conf_put "neovim/nvim-lspconfig".servers.lua_ls(util.nested {
-		Lua = util.nested {
-			["diagnostics.disable"] = { "trailing-space", "redefined-local" },
-			["workspace.checkThirdParty"] = false,
-			["telemetry.enable"] = false,
-		},
-	}),
+	util.conf_put "neovim/nvim-lspconfig".servers.lua_ls {
+		settings = util.nested {
+			["Lua.diagnostics.disable"] = { "trailing-space", "redefined-local" },
+			["Lua.workspace.checkThirdParty"] = false,
+			["Lua.telemetry.enable"] = false,
+		}
+	},
 
 	-- ccls isn't in mason?
 	-- util.conf_add_to "WhoIsSethDaniel/mason-tool-installer.nvim".ensure_installed { "ccls" },
 
-	util.conf_put "neovim/nvim-lspconfig".servers.ccls(util.nested {
-		["init_options.cache.directory"] = vim.fn.stdpath("cache").."/ccls-cache",
-	}),
+	util.conf_put "neovim/nvim-lspconfig".servers.ccls {
+		settings = util.nested {
+			["init_options.cache.directory"] = vim.fn.stdpath("cache").."/ccls-cache",
+		},
+	},
 
 	util.conf_put "neovim/nvim-lspconfig".diagnostic {
 		virtual_text = false,

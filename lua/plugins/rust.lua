@@ -34,13 +34,9 @@ return {
 		},
 		settings = util.nested {
 			["rust-analyzer.cargo.features"] = "all",
-			["rust-analyzer.cargo.buildScripts.enable"] = true,
-			["rust-analyzer.procMacro.enabled"] = true,
 			["rust-analyzer.check.features"] = "all",
 			["rust-analyzer.check.command"] = "clippy",
 			["rust-analyzer.check.extraArgs"] = { "--no-deps" },
-			-- ["completion.callable.snippets"] = none,
-			-- ["completion.postfix.enable"] = false,
 		},
 	},
 
