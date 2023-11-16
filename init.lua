@@ -48,6 +48,7 @@ o.scrolloff = 7
 o.sidescrolloff = 30
 o.wrap = false
 o.linebreak = true
+
 o.list = true
 o.listchars = {
 	tab = "⟩ ",
@@ -55,8 +56,61 @@ o.listchars = {
 	precedes = "<",
 	extends = ">",
 	space = "·",
-	nbsp = "░",
+	nbsp = "␣",
 }
+
+local function gcd(a, b)
+	return b==0 and a or gcd(b,a%b)
+end
+
+local function update_lead()
+	local lcs = vim.opt_local.listchars:get()
+	local tab = vim.fn.str2list(lcs.tab)
+	local space = vim.fn.str2list(lcs.leadmultispace or lcs.lead or lcs.multispace or lcs.space)
+	local sw = vim.fn.shiftwidth()
+	local lead = {}
+	local lcm = (sw * #space)/gcd(sw, #space)
+	for i = 0, lcm-1 do
+		if i % sw == 0 then
+			lead[#lead+1] = tab[1]
+		else
+			lead[#lead+1] = space[i % #space + 1]
+		end
+	end
+	vim.opt_local.listchars:append({
+		leadmultispace = vim.fn.list2str(lead),
+	})
+end
+local function update_lead()
+	local lcs = vim.opt_local.listchars:get()
+	local tab = vim.fn.str2list(lcs.tab)
+	local space = vim.fn.str2list(vim.opt.listchars:get().leadmultispace or lcs.lead or lcs.multispace or lcs.space)
+	local ts = vim.bo.tabstop
+	local lcm = (ts * #space)/gcd(ts, #space)
+	local lead = {}
+	for i = 0, lcm-1 do
+		if i % ts == 0 then
+			lead[#lead+1] = tab[1]
+		else
+			lead[#lead+1] = space[i % #space + 1]
+		end
+	end
+	vim.opt_local.listchars:append({
+		leadmultispace = vim.fn.list2str(lead),
+	})
+	vim.opt_local.listchars:append {
+		leadmultispace = vim.fn.list2str(lead),
+	}
+end
+vim.api.nvim_create_autocmd("OptionSet", {
+	pattern = { "listchars", "tabstop", "filetype" },
+	callback = update_lead,
+})
+vim.api.nvim_create_autocmd("VimEnter", {
+	once = true,
+	callback = update_lead,
+})
+
 o.cursorline = true
 o.termguicolors = true
 o.virtualedit = "block"
@@ -75,6 +129,7 @@ o.sections = ""
 o.fileencodings = "utf8,cp932,latin1"
 
 o.updatetime = 250
+o.timeout = false
 
 -- o.commentstring = "# %s"
 o.formatoptions = ""
@@ -84,7 +139,7 @@ o.sts = 4
 o.sw = 4
 
 vim.cmd[[
-au FileType *       setlocal et< ts<  sw<  sts<  fo< noshowmatch
+au FileType *       setlocal et< ts<  sw<  sts<  fo< noshowmatch syntax=ON
 au FileType haskell setlocal et  ts=2 sw=2 sts=2
 au FileType yaml    setlocal et  ts=2 sw=2 sts=2
 au BufNewFile,BufRead *.jsm setf javascript

@@ -90,6 +90,9 @@ return {
 				},
 			}
 		end,
+		init = function()
+			vim.o.completeopt = "menu,menuone,noselect,noinsert"
+		end,
 	},
 
 	{
@@ -155,23 +158,8 @@ return {
 		},
 		opts = {
 			use_default_keymaps = false,
-			max_join_length = 120,
-		},
-		keys = {
-			{ "gs", lazy "treesj".split() },
-			{ "gS", lazy "treesj".join() },
-		},
-	},
-
-	-- 
-	{
-		"Wansmer/treesj",
-		dependencies = {
-			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			use_default_keymaps = false,
-			max_join_length = 120,
+			check_syntax_error = false,
+			max_join_length = 0xFFFFFFFF,
 		},
 		keys = {
 			{ "gs", lazy "treesj".split() },
@@ -181,55 +169,7 @@ return {
 
 	-- peek lines in commandline
 	{"nacro90/numb.nvim", event = "VeryLazy", opts = {}},
-
-	-- fold
-	{
-		"kevinhwang91/nvim-ufo",
-		dependencies = "kevinhwang91/promise-async",
-		event = "BufReadPost",
-		opts = {
-			open_fold_hl_timeout = 0,
-			fold_virt_text_handler = function(virtText, lnum, endLnum, width, truncate)
-				local newVirtText = {}
-				local suffix = (' + %d '):format(endLnum - lnum)
-				local sufWidth = vim.fn.strdisplaywidth(suffix)
-				local targetWidth = width - sufWidth
-				local curWidth = 0
-				for _, chunk in ipairs(virtText) do
-					local chunkText = chunk[1]
-					local chunkWidth = vim.fn.strdisplaywidth(chunkText)
-					if curWidth + chunkWidth < targetWidth then
-						table.insert(newVirtText, chunk)
-					else
-						chunkText = truncate(chunkText, targetWidth - curWidth)
-						local hlGroup = chunk[2]
-						table.insert(newVirtText, {chunkText, hlGroup})
-						chunkWidth = vim.fn.strdisplaywidth(chunkText)
-						if curWidth + chunkWidth < targetWidth then
-							suffix = suffix .. (' '):rep(targetWidth - curWidth - chunkWidth)
-						end
-						break
-					end
-					curWidth = curWidth + chunkWidth
-				end
-				table.insert(newVirtText, {suffix, 'MoreMsg'})
-				return newVirtText
-			end
-		},
-		init = function()
-			vim.keymap.set("n", "zR", function()
-				require("ufo").openAllFolds()
-			end)
-			vim.keymap.set("n", "zM", function()
-				require("ufo").closeAllFolds()
-			end)
-
-			vim.o.foldcolumn = '1' -- '0' is not bad
-			vim.o.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
-			vim.o.foldlevelstart = 99
-			vim.o.foldenable = true
-		end,
-	},
+	{"junegunn/vim-easy-align", command = "EasyAlign"},
 
 	{
 		"hrsh7th/cmp-nvim-lsp",
@@ -242,5 +182,13 @@ return {
 				}
 			end),
 		},
+	},
+
+	{
+		"Vimjas/vim-python-pep8-indent",
+		ft="python",
+		init = function()
+			vim.cmd[[ au FileType python set syntax=ON ]]
+		end
 	},
 }

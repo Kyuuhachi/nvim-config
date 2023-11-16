@@ -62,6 +62,24 @@ return {
 		},
 	},
 
+	util.conf_add_to "WhoIsSethDaniel/mason-tool-installer.nvim".ensure_installed { "pyright" },
+	util.conf_put "neovim/nvim-lspconfig".servers.pyright {
+		settings = util.nested {
+			["python.analysis.diagnosticSeverityOverrides"] = {
+				reportMissingModuleSource = "none",
+				reportUnusedVariable = "none",
+				reportUnnecessaryIsInstance = "none",
+				reportMissingParameterType = "information",
+				reportMissingTypeArgument = "information",
+				reportPropertyTypeMismatch = "warning",
+				reportImplicitStringConcatenation = "information",
+				reportUnnecessaryCast = "information",
+				reportMatchNotExhaustive = "information",
+				reportUnnecessaryTypeIgnoreComment = "information",
+			},
+		},
+	},
+
 	util.conf_put "neovim/nvim-lspconfig".diagnostic {
 		virtual_text = false,
 		signs = true,

@@ -3,14 +3,12 @@ local util = require "98.util"
 return {
 	{
 		"nvim-treesitter/nvim-treesitter",
-		version = false, -- last release is way too old and doesn't work on Windows
+		version = false,
 		build = ":TSUpdate",
-		-- event = { "BufReadPost", "BufNewFile" },
-		-- cmd = { "TSUpdateSync" },
 		main = "nvim-treesitter.configs",
 		opts = {
 			highlight = { enable = true },
-			indent = { enable = true },
+			indent = { enable = false },
 			ensure_installed = {
 				"query",
 				"lua", "luadoc", "luap",
@@ -20,7 +18,7 @@ return {
 				"javascript", "jsdoc", "html", "css",
 				"markdown", "markdown_inline",
 				"bash",
-				"json", "yaml", "toml",
+				-- "json", "yaml", "toml",
 				"regex",
 				"vim", "vimdoc",
 			},

@@ -36,6 +36,7 @@
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "c6380e218a2b4ffcc957a71606900a24e5c7b618" },
   "rust-tools.nvim": { "branch": "master", "commit": "0cc8adab23117783a0292a0c8a2fbed1005dc645" },
   "telescope.nvim": { "branch": "master", "commit": "d2e17ba18a6840b7e7079764b282616c3188e0de" },
-  "tint.nvim": { "branch": "master", "commit": "80b15a91087991068d5834419437f652d1d4bc8e" },
-  "treesj": { "branch": "main", "commit": "3203aa553217921fd4dcb79245f9df07278910b2" }
+  "treesj": { "branch": "main", "commit": "3203aa553217921fd4dcb79245f9df07278910b2" },
+  "vim-easy-align": { "branch": "master", "commit": "12dd6316974f71ce333e360c0260b4e1f81169c3" },
+  "vim-python-pep8-indent": { "branch": "master", "commit": "60ba5e11a61618c0344e2db190210145083c91f8" }
 }
