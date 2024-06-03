@@ -80,24 +80,15 @@ local function update_lead()
 	vim.opt_local.listchars:append({
 		leadmultispace = vim.fn.list2str(lead),
 	})
-	vim.opt_local.listchars:append {
-		leadmultispace = vim.fn.list2str(lead),
-	}
 end
-vim.api.nvim_create_autocmd("OptionSet", {
-	pattern = { "listchars", "tabstop", "filetype" },
-	callback = update_lead,
-})
-vim.api.nvim_create_autocmd("VimEnter", {
-	once = true,
-	callback = update_lead,
-})
+vim.api.nvim_create_autocmd("VimEnter", { once = true, callback = update_lead })
+vim.api.nvim_create_autocmd("OptionSet", { pattern = { "listchars", "tabstop", "filetype" }, callback = update_lead })
 
 o.cursorline = true
-o.termguicolors = true
 o.virtualedit = "block"
+
 o.foldmethod = "marker"
-o.foldlevel = 1000
+o.foldlevelstart = 99
 
 o.ignorecase = true
 o.smartcase = true
@@ -113,23 +104,22 @@ o.fileencodings = "utf8,cp932,latin1"
 o.updatetime = 250
 o.timeout = false
 
--- o.commentstring = "# %s"
-o.formatoptions = ""
+o.commentstring = "# %s"
+o.formatoptions = "j"
 o.expandtab = false
-o.ts = 4
-o.sts = 4
-o.sw = 4
+o.tabstop = 4
+o.softtabstop = 0
+o.shiftwidth = 0
 
 vim.cmd[[
-au FileType *       setlocal et< ts<  sw<  sts<  fo< noshowmatch syntax=ON
-au FileType haskell setlocal et  ts=2 sw=2 sts=2
-au FileType yaml    setlocal et  ts=2 sw=2 sts=2
-au BufNewFile,BufRead *.jsm setf javascript
+au FileType *       setlocal et< ts< sw< sts< fo< noshowmatch syntax=ON
+au FileType haskell setlocal et ts=2
+au FileType yaml    setlocal et ts=2
 
 au StdinReadPost * set nomodified
 ]]
 
-vim.keymap.set({"","!"}, "<F1>", "<Nop>")
+vim.keymap.set({"","l"}, "<F1>", "<Nop>")
 vim.keymap.set("n", ",,", "<C-^>")
 
 vim.keymap.set("", "H", "['^', 'g^'][&wrap]", {expr = true, remap = true})
@@ -145,23 +135,18 @@ nnoremap <silent> g* :let @/='\C'   . expand('<cword>')       <CR>:let v:searchf
 nnoremap <silent> g# :let @/='\C'   . expand('<cword>')       <CR>:let v:searchforward=0<CR>n
 ]]
 
-vim.keymap.set("n", "<space>e", vim.diagnostic.open_float)
 vim.keymap.set("n", "<C-k>", vim.diagnostic.goto_prev)
 vim.keymap.set("n", "<C-j>", vim.diagnostic.goto_next)
-vim.keymap.set("n", "<space>q", vim.diagnostic.setloclist)
 
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration)
 vim.keymap.set("n", "gd", vim.lsp.buf.definition)
-vim.keymap.set("n", "K", vim.lsp.buf.hover)
 vim.keymap.set("n", "gi", vim.lsp.buf.implementation)
 vim.keymap.set("n", "gr", vim.lsp.buf.references)
-vim.keymap.set("n", "<A-k>", vim.lsp.buf.signature_help)
-vim.keymap.set("n", "<F1>", vim.lsp.buf.code_action)
-vim.keymap.set("v", "<F1>", vim.lsp.buf.code_action)
+vim.keymap.set("n", "K", vim.lsp.buf.hover)
+vim.keymap.set("n", "gK", vim.lsp.buf.signature_help)
+vim.keymap.set({"n","v"}, "<F1>", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<F2>", vim.lsp.buf.rename)
 
--- vim.api.nvim_create_autocmd("CursorHold", { callback = vim.lsp.buf.document_highlight })
--- vim.api.nvim_create_autocmd({"CursorMoved","InsertEnter"}, { callback = vim.lsp.buf.clear_references })
 vim.api.nvim_create_autocmd({"BufEnter","CursorHold","InsertLeave"}, { callback = vim.lsp.codelens.refresh })
 
 vim.g.loaded_python3_provider = 0
