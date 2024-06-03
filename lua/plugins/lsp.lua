@@ -22,8 +22,20 @@ return {
 			for k, settings in pairs(opts.servers) do
 				local setup = settings.setup or require("lspconfig")[k].setup
 				settings.setup = nil
-				if not settings.on_attach then settings.on_attach = opts.on_attach end
-				if not settings.capabilities then settings.capabilities = opts.capabilities end
+
+				settings.on_attach = function(client, bufnr)
+					if client.server_capabilities.documentSymbolProvider then
+						require "nvim-navic".attach(client, bufnr)
+					end
+					if opts.on_attach then
+						opts.on_attach(client, bufnr)
+					end
+				end
+
+				if not settings.capabilities then
+					settings.capabilities = opts.capabilities
+				end
+
 				setup(settings)
 			end
 		end,
@@ -91,4 +103,6 @@ return {
 			header = "",
 		},
 	},
+
+	{ "rrethy/vim-illuminate" }
 }

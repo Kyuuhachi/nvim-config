@@ -25,7 +25,7 @@ vim.opt.rtp:prepend(lazypath)
 require "lazy".setup("plugins", {
 	dev = {
 		patterns = { "Kyuuhachi" },
-		path = vim.fn.fnamemodify(debug.getinfo(1).source:sub(2), ":p:h:h") .. "/local"
+		path = vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h:h") .. "/local",
 	},
 	install = {
 		colorscheme = { "worzel" },
@@ -63,24 +63,6 @@ local function gcd(a, b)
 	return b==0 and a or gcd(b,a%b)
 end
 
-local function update_lead()
-	local lcs = vim.opt_local.listchars:get()
-	local tab = vim.fn.str2list(lcs.tab)
-	local space = vim.fn.str2list(lcs.leadmultispace or lcs.lead or lcs.multispace or lcs.space)
-	local sw = vim.fn.shiftwidth()
-	local lead = {}
-	local lcm = (sw * #space)/gcd(sw, #space)
-	for i = 0, lcm-1 do
-		if i % sw == 0 then
-			lead[#lead+1] = tab[1]
-		else
-			lead[#lead+1] = space[i % #space + 1]
-		end
-	end
-	vim.opt_local.listchars:append({
-		leadmultispace = vim.fn.list2str(lead),
-	})
-end
 local function update_lead()
 	local lcs = vim.opt_local.listchars:get()
 	local tab = vim.fn.str2list(lcs.tab)
@@ -178,8 +160,8 @@ vim.keymap.set("n", "<F1>", vim.lsp.buf.code_action)
 vim.keymap.set("v", "<F1>", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<F2>", vim.lsp.buf.rename)
 
-vim.api.nvim_create_autocmd("CursorHold", { callback = vim.lsp.buf.document_highlight })
-vim.api.nvim_create_autocmd({"CursorMoved","InsertEnter"}, { callback = vim.lsp.buf.clear_references })
+-- vim.api.nvim_create_autocmd("CursorHold", { callback = vim.lsp.buf.document_highlight })
+-- vim.api.nvim_create_autocmd({"CursorMoved","InsertEnter"}, { callback = vim.lsp.buf.clear_references })
 vim.api.nvim_create_autocmd({"BufEnter","CursorHold","InsertLeave"}, { callback = vim.lsp.codelens.refresh })
 
 vim.g.loaded_python3_provider = 0

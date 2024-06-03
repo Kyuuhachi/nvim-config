@@ -191,4 +191,8 @@ return {
 			vim.cmd[[ au FileType python set syntax=ON ]]
 		end
 	},
+
+	{
+		"github/copilot.vim",
+	},
 }

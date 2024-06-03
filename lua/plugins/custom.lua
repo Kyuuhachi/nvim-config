@@ -56,12 +56,10 @@ return {
 		end)(),
 		priority = 1000,
 		lazy = false,
-		opts = {
-			transparent = true,
-		},
 		dependencies = "rktjmp/lush.nvim",
 		init = function()
 			vim.cmd.colorscheme("worzel")
+			require"worzel".enable_autocmd()
 		end,
 	},
 

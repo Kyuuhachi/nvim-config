@@ -21,8 +21,14 @@ return {
 				show_buffer_close_icons = false,
 				show_close_icon = false,
 				diagnostics = "nvim_lsp",
-			}
+			},
 		},
+	},
+
+	{
+	  "nvim-zh/colorful-winsep.nvim",
+	  config = true,
+	  event = { "WinNew" },
 	},
 
 	-- bottom line
@@ -45,9 +51,27 @@ return {
 					{ "filename", path = 1 },
 					{
 						cond = function()
-							return package.loaded["nvim-navic"] and require("nvim-navic").is_available()
+							return require "nvim-navic".is_available()
 						end,
-						function() return require("nvim-navic").get_location() end,
+						function()
+							local TYPES = {
+								-- String = false,
+								-- Number = false,
+								-- Boolean = false,
+								-- Array = false,
+								-- Object = false,
+							}
+							local data = require "nvim-navic".get_data() or {}
+							local parts = {}
+							for _, v in ipairs(data) do
+								if TYPES[v.type] ~= false then
+									local name = v.name:gsub("%%", "%%%%"):gsub("\n", " ")
+									local component = v.icon .. name
+									table.insert(parts, component)
+								end
+							end
+							return table.concat(parts, "  ")
+						end,
 					},
 				},
 				lualine_x = {
@@ -57,8 +81,8 @@ return {
 				},
 				lualine_y = {
 					"progress",
-					{ function()
-						if vim.api.nvim_get_vvar("hlsearch") == 1 then
+					{
+						function()
 							local max = 999
 							local res = vim.fn.searchcount({ maxcount = max, timeout = 500 })
 							local function f(n) if n > max then return ">"..max else return n end end
@@ -66,9 +90,10 @@ return {
 							if res.total > 0 then
 								return string.format("%s/%s", f(res.current), f(res.total))
 							end
-						end
-						return ""
-					end }
+							return ""
+						end,
+						cond = function() return vim.api.nvim_get_vvar("hlsearch") == 1 end
+					}
 				},
 				lualine_z = {
 					"location"
@@ -77,20 +102,90 @@ return {
 		},
 		init = function()
 			vim.opt.shortmess:append "sS"
+			vim.opt.laststatus = 3
 		end,
 	},
 
 	-- lsp symbol navigation for lualine
+	{ "SmiteshP/nvim-navic" },
+
 	{
-		"SmiteshP/nvim-navic",
-		lazy = true,
+		"b0o/incline.nvim",
 		opts = {
-			highlight = true,
-			separator = "»",
-			lsp = {
-				auto_attach = true,
+			hide = {
+				focused_win = true,
 			},
+			render = function(props)
+				local ll = require "lualine.components.diagnostics.config"
+
+				local path = vim.api.nvim_buf_get_name(props.buf)
+				local filename = vim.fn.fnamemodify(path, ":t")
+				if filename == "" then
+					filename = "[No Name]"
+				end
+				local icon, icon_color = require "nvim-web-devicons".get_icon_color(path)
+
+				local diag = {}
+				local name_color = nil
+				for _, category in ipairs(ll.options.sections) do
+					local n = #vim.diagnostic.get(props.buf, {
+						severity = vim.diagnostic.severity[string.upper(category)],
+					})
+					if n > 0 then
+						local group = category:gsub("^%l", string.upper)
+						table.insert(diag, {
+							ll.symbols.icons[category] .. n .. ' ',
+							group = 'DiagnosticSign' .. group
+						})
+						name_color = name_color or ("Diagnostic" .. group)
+					end
+				end
+
+				local out = {}
+				if #diag > 0 then
+					table.insert(out, diag)
+					table.insert(out, { "▏", group = "NonText" })
+				end
+				if icon then
+					table.insert(out, { icon, group = name_color, guifg = icon_color })
+					table.insert(out, " ")
+				end
+				table.insert(out, { filename, group = name_color })
+				if vim.bo[props.buf].modified then
+					table.insert(out, { " [+]", group = name_color })
+				end
+
+				return out
+			end,
 		},
+	},
+
+	{
+		"b0o/incline.nvim",
+		opts = function(plug, opts)
+			return vim.tbl_deep_extend("force", opts, {
+				window = { padding = 0 },
+				highlight = {
+					groups = {
+						InclineNormal = { guibg = "none" },
+						InclineNormalNC = { guibg = "none" },
+					}
+				},
+				render = function(params)
+					local content = opts.render(params)
+					local hl = vim.api.nvim_get_hl(0, { name = "NormalFloat", link = false })
+					local bg = string.format("#%06x", hl.bg)
+					return {
+						{ "", guifg = bg },
+						{
+							{ " ", content, " " },
+							guibg = bg,
+						},
+						{ "", guifg = bg },
+					}
+				end
+			})
+		end
 	},
 
 	-- replace vim.ui.select and vim.ui.input
