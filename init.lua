@@ -12,7 +12,7 @@ end
 
 -- plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
 	vim.fn.system {
 		"git",
 		"clone",
@@ -148,7 +148,6 @@ vim.api.nvim_create_autocmd("LspAttach", { callback = function(args)
 		})
 	end
 end })
-
 
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
