@@ -22,16 +22,6 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
-require "lazy".setup("plugins", {
-	dev = {
-		patterns = { "Kyuuhachi" },
-		path = vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h:h") .. "/local",
-	},
-	install = {
-		colorscheme = { "worzel" },
-	},
-})
-
 local o = vim.opt
 
 o.mouse = ""
@@ -147,9 +137,29 @@ vim.keymap.set("n", "gK", vim.lsp.buf.signature_help)
 vim.keymap.set({"n","v"}, "<F1>", vim.lsp.buf.code_action)
 vim.keymap.set("n", "<F2>", vim.lsp.buf.rename)
 
-vim.api.nvim_create_autocmd({"BufEnter","CursorHold","InsertLeave"}, { callback = vim.lsp.codelens.refresh })
+vim.api.nvim_create_autocmd("LspAttach", { callback = function(args)
+	local client = vim.lsp.get_client_by_id(args.data.client_id)
+	if client and client.server_capabilities.code_lens then
+		vim.api.nvim_create_autocmd({"BufEnter","CursorHold","InsertLeave"}, {
+			callback = function() vim.lsp.codelens.refresh() end,
+			buffer = args.bufnr,
+		})
+	end
+end })
+
 
 vim.g.loaded_python3_provider = 0
 vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
 vim.g.loaded_perl_provider = 0
+
+-- putting plugins last makes the above settings apply even if it fails to load
+require "lazy".setup("plugins", {
+	dev = {
+		patterns = { "Kyuuhachi" },
+		path = vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h:h") .. "/local",
+	},
+	install = {
+		colorscheme = { "worzel" },
+	},
+})

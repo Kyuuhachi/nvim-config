@@ -6,7 +6,12 @@ plug["nvim-treesitter"] = {
 	build = ":TSUpdate",
 	main = "nvim-treesitter.configs",
 	opts = {
-		highlight = { enable = true },
+		highlight = {
+			enable = true,
+			disable = function(lang, bufnr)
+				return vim.api.nvim_buf_line_count(bufnr) > 5000
+			end,
+		},
 		indent = { enable = false },
 		ensure_installed = {
 			"query",

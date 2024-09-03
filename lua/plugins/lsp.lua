@@ -154,8 +154,8 @@ plug["mrcjkb/rustaceanvim"] = {
 vim.g.rustaceanvim = {
 	server = {
 		on_attach = function(_, bufnr)
-			vim.keymap.set({"n","v"}, "<F1>", vim.cmd.RustLsp("codeAction"), { buffer = bufnr })
-			vim.keymap.set({"n","v"}, "J", vim.cmd.RustLsp("joinLines"), { buffer = bufnr })
+			vim.keymap.set({"n","v"}, "<F1>", function() vim.cmd.RustLsp("codeAction") end, { buffer = bufnr })
+			vim.keymap.set({"n","v"}, "J", function() vim.cmd.RustLsp("joinLines") end, { buffer = bufnr })
 		end,
 		default_settings = util.nested {
 			["rust-analyzer.cargo.features"] = "all",

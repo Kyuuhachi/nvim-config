@@ -13,12 +13,12 @@ plug["kylechui/nvim-surround"] = {
 	},
 }
 
-plug["echa.novski/mini.comment"] = {
+plug["echasnovski/mini.comment"] = {
 	keys = {{"gc", mode = {"n", "v"}}},
 	opts = {},
 }
 
-plug["echa.novski/mini.ai"] = {
+plug["echasnovski/mini.ai"] = {
 	keys = {
 		{ "a", mode = { "x", "o" } },
 		{ "i", mode = { "x", "o" } },

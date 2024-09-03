@@ -32,7 +32,7 @@ plug["lewis6991/gitsigns.nvim"] = {
 }
 
 -- window separator
-plug["vim-zh/colorful-winsep.nvim"] = {
+plug["nvim-zh/colorful-winsep.nvim"] = {
 	config = true,
 	event = { "WinNew" },
 }
