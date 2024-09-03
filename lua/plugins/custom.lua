@@ -41,7 +41,7 @@ plug["Kyuuhachi/worzel.nvim"] = {
 	dependencies = "rktjmp/lush.nvim",
 	init = function()
 		vim.cmd.colorscheme("worzel")
-		require"worzel".enable_autocmd()
+		require"worzel".enable_background()
 	end,
 }
 

@@ -1,4 +1,3 @@
-local util = require "98.util"
 local plug = require "plugins"
 
 plug["nvim-treesitter"] = {
@@ -49,6 +48,18 @@ plug["echasnovski/mini.hipatterns"] = {
 				todo  = { pattern = "%f[%w]()TODO()%f[%W]",  group = "MiniHipatternsTodo"  },
 				note  = { pattern = "%f[%w]()NOTE()%f[%W]",  group = "MiniHipatternsNote"  },
 				hex_color = require "mini.hipatterns".gen_highlighter.hex_color(),
+				hl = {
+					pattern = function(bufid)
+						if vim.bo[bufid].define:match("colorscheme") then
+							return "%f[%w]%w+%f[%W]"
+						end
+					end,
+					group = function(_, match)
+						if vim.fn.synIDattr(vim.fn.hlID(match), "name") == match then
+							return match
+						end
+					end,
+				},
 			},
 			delay = {
 				text_change = 0,
@@ -61,7 +72,6 @@ plug["echasnovski/mini.hipatterns"] = {
 plug["HiPhish/rainbow-delimiters.nvim"] = {
 	config = function()
 		vim.g.rainbow_delimiters = {
-			highlight = { "Rainbow1", "Rainbow2", "Rainbow3", "Rainbow4", "Rainbow5", "Rainbow6" },
 			strategy = {
 				[""] = require "rainbow-delimiters".strategy["global"],
 			},
