@@ -62,6 +62,4 @@ plug["Vimjas/vim-python-pep8-indent"] = {
 	ft = "python",
 }
 
-plug["github/copilot.vim"] = {}
-
 return {}
