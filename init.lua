@@ -1,12 +1,14 @@
 -- kodoku integration: make ~ behave nicely
-local _stdpath = {}
-for _, k in pairs{"cache", "config", "config_dirs", "data", "data_dirs", "log", "run", "state"} do
-	_stdpath[k] = vim.fn.stdpath(k)
+if vim.env.KODOKU_HOME and vim.env.USER_HOME then
+	local _stdpath = {}
+	for _, k in pairs{"cache", "config", "config_dirs", "data", "data_dirs", "log", "run", "state"} do
+		_stdpath[k] = vim.fn.stdpath(k)
+	end
+	vim.opt.shadafile = _stdpath["data"].."/shada/main.shada"
+	vim.env.NVIM_RPLUGIN_MANIFEST = _stdpath["data"].."/rplugin.vim"
+	vim.fn.stdpath = function(a) return _stdpath[a] or error(("invalid stdpath(%q)"):format(a)) end
+	vim.cmd [[ let $HOME = $USER_HOME ]] -- Assigning to vim.env.HOME doesn't work, #17501
 end
-vim.opt.shadafile = _stdpath["data"].."/shada/main.shada"
-vim.env.NVIM_RPLUGIN_MANIFEST = _stdpath["data"].."/rplugin.vim"
-vim.fn.stdpath = function(a) return _stdpath[a] or error(("invalid stdpath(%q)"):format(a)) end
-vim.cmd [[ let $HOME = $USER_HOME ]] -- Assigning to vim.env.HOME doesn't work, #17501
 
 -- plugins
 local lazypath = vim.fn.stdpath "data" .. "/lazy/lazy.nvim"
