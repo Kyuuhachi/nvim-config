@@ -72,6 +72,7 @@ plug["echasnovski/mini.hipatterns"] = {
 plug["HiPhish/rainbow-delimiters.nvim"] = {
 	config = function()
 		vim.g.rainbow_delimiters = {
+			highlight = { "RainbowDelimiterRed", "RainbowDelimiterOrange", "RainbowDelimiterYellow", "RainbowDelimiterGreen", "RainbowDelimiterCyan", "RainbowDelimiterBlue", "RainbowDelimiterViolet" },
 			strategy = {
 				[""] = require "rainbow-delimiters".strategy["global"],
 			},
