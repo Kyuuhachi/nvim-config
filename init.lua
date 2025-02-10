@@ -161,6 +161,7 @@ require "lazy".setup("plugins", {
 		path = vim.fn.fnamemodify(vim.env.MYVIMRC, ":p:h:h") .. "/local",
 	},
 	install = {
+		missing = false,
 		colorscheme = { "worzel" },
 	},
 })
